@@ -190,7 +190,7 @@ function createPath( char, scale, offsetX, offsetY, data ) {
 
 					x = outline[ i ++ ] * scale + offsetX;
 					y = outline[ i ++ ] * scale + offsetY;
-
+					FontLoader.js
 					path.moveTo( x, y );
 
 					break;
