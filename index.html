@@ -3,12 +3,53 @@
 	<head>
 		<title>researchim.ai</title>
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<link type="text/css" rel="stylesheet" href="src/main.css">
 	</head>
 
 	<body>
-		<div id="container"></div>
+		<nav id="sideNav">
+			<ul>
+				<li><a href="#section0" class="active"><span>Home</span></a></li>
+				<li><a href="#section1"><span>О нас</span></a></li>
+				<li><a href="#section2"><span>Проекты</span></a></li>
+				<li><a href="#section3"><span>Присоединяйтесь</span></a></li>
+			</ul>
+		</nav>
+
+		<div id="mainScrollContainer">
+			<section id="section0" class="fullscreen-section">
+				<div id="container"></div>
+			</section>
+			<section id="section1" class="fullscreen-section text-section">
+				<div class="content-wrapper">
+					<h2>О нас</h2>
+					<p>Мы в researchim изучаем и иногда делаем проекты по ИИ, RL и LLM</p>
+					<p>Собираемся в Telegram: <a href="https://t.me/researchim" target="_blank" rel="noopener noreferrer" class="project-link">Researchim</a></p>
+				</div>
+			</section>
+			<section id="section2" class="fullscreen-section text-section">
+				<div class="content-wrapper">
+					<h2>Проекты</h2>
+					<ul class="project-list">
+						<li>
+							<p><strong>re-rl:</strong> Библиотека для генерации искусственных математических и логических задач для обучения LLM навыкам reasoning с использованием RL.</p>
+							<a href="https://github.com/researchim-ai/re-rl" target="_blank" rel="noopener noreferrer" class="project-link">GitHub репозиторий</a>
+						</li>
+						<li>
+							<p><strong>re-tiny-grpo:</strong> Минималистичная имплементация multiturn GRPO алгоритма для обучения LLM использованию инструментов (tool calling).</p>
+							<a href="https://github.com/researchim-ai/re-tiny-grpo" target="_blank" rel="noopener noreferrer" class="project-link">GitHub репозиторий</a>
+						</li>
+					</ul>
+				</div>
+			</section>
+			<section id="section3" class="fullscreen-section text-section">
+				<div class="content-wrapper">
+					<h2>Присоединяйтесь</h2>
+					<p>Мы всегда открыты для новых идей и сотрудничества. Свяжитесь с нами, чтобы стать частью сообщества researchim-ai.</p>
+				</div>
+			</section>
+		</div>
 
 		<script type="x-shader/x-vertex" id="vertexshader">
 
@@ -62,139 +103,213 @@
 			import { FontLoader } from 'src/FontLoader.js';
 			import { TextGeometry } from 'src/TextGeometry.js';
 
-			import Stats from 'src/stats.module.js';
-
-			let renderer, scene, camera, stats;
-
-			let line, uniforms;
+			let renderer, scene, camera;
+			let textGroup, line, aiMesh, uniforms;
+			const baseWidth = 1200; // Базовая ширина для масштабирования (немного увеличим)
+			let mouse = new THREE.Vector2();
+			let targetRotation = new THREE.Vector2();
+			let displacementTarget = []; // Для плавного смещения
 
 			const loader = new FontLoader();
 			loader.load( 'src/helvetiker_bold.typeface.json', function ( font ) {
 
 				init( font );
-
+				initScrollNav();
 			} );
 
 			function init( font ) {
 
 				camera = new THREE.PerspectiveCamera( 30, window.innerWidth / window.innerHeight, 1, 10000 );
-				camera.position.z = 400;
+				camera.position.z = 450; // Немного дальше
 
 				scene = new THREE.Scene();
-				scene.background = new THREE.Color( 0x050505 );
+				scene.background = null; // Прозрачный фон для Canvas
 
 				uniforms = {
-
-					amplitude: { value: 5.0 },
-					opacity: { value: 0.3 },
+					amplitude: { value: 1.5 }, // Уменьшим начальную амплитуду
+					opacity: { value: 0.4 }, // Чуть менее прозрачный
 					color: { value: new THREE.Color( 0xffffff ) }
-
 				};
 
 				const shaderMaterial = new THREE.ShaderMaterial( {
-
 					uniforms: uniforms,
 					vertexShader: document.getElementById( 'vertexshader' ).textContent,
 					fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
 					blending: THREE.AdditiveBlending,
 					depthTest: false,
 					transparent: true
-
 				} );
-
 
 				const geometry = new TextGeometry( 'researchim', {
-
 					font: font,
-
 					size: 50,
-					depth: 15,
-					curveSegments: 10,
-
-					bevelThickness: 5,
-					bevelSize: 1.5,
+					depth: 10, // Менее глубокий
+					curveSegments: 8,
+					bevelThickness: 2,
+					bevelSize: 0.8,
 					bevelEnabled: true,
-					bevelSegments: 10,
-
+					bevelSegments: 5,
 				} );
-
 				geometry.center();
 
 				const count = geometry.attributes.position.count;
-
 				const displacement = new THREE.Float32BufferAttribute( count * 3, 3 );
 				geometry.setAttribute( 'displacement', displacement );
-
+				displacementTarget = new Float32Array(count * 3); // Инициализация массива для целевых смещений
 				const customColor = new THREE.Float32BufferAttribute( count * 3, 3 );
 				geometry.setAttribute( 'customColor', customColor );
-
 				const color = new THREE.Color( 0xffffff );
-
 				for ( let i = 0, l = customColor.count; i < l; i ++ ) {
-
-					color.setHSL( 0.5, i / l - 0.2, 0.2 );
+					color.setHSL( 0.5 + Math.sin(i / l * Math.PI) * 0.1, 0.6, 0.6 ); // Более интересный цвет
 					color.toArray( customColor.array, i * customColor.itemSize );
-
 				}
 
 				line = new THREE.Line( geometry, shaderMaterial );
-				line.rotation.x = 0.2;
-				scene.add( line );
 
-				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				const aiGeometry = new TextGeometry( '.ai', {
+					font: font,
+					size: 50,
+					depth: 10,
+					curveSegments: 8,
+					bevelThickness: 2,
+					bevelSize: 0.8,
+					bevelEnabled: true,
+					bevelSegments: 5,
+				} );
+				aiGeometry.center();
+
+				const aiMaterial = new THREE.ShaderMaterial({
+					uniforms: {
+						color: { value: new THREE.Color(0x61dafb) }, // Цвет React blue
+						opacity: { value: 0.8 }
+					},
+					vertexShader: document.getElementById('vertexshader').textContent,
+					fragmentShader: document.getElementById('fragmentshader').textContent,
+					blending: THREE.AdditiveBlending,
+					depthTest: false,
+					transparent: true
+				});
+
+				aiMesh = new THREE.Line(aiGeometry, aiMaterial);
+
+				const box = new THREE.Box3().setFromObject(line);
+				const textWidth = box.max.x - box.min.x;
+				aiMesh.position.x = textWidth / 2 + 5; // Чуть ближе
+
+				// Группа для масштабирования и вращения
+				textGroup = new THREE.Group();
+				textGroup.add(line);
+				textGroup.add(aiMesh);
+				scene.add(textGroup);
+
+				renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				renderer.setAnimationLoop( animate );
 
 				const container = document.getElementById( 'container' );
 				container.appendChild( renderer.domElement );
-				//
 
+				document.addEventListener('mousemove', onDocumentMouseMove, false);
 				window.addEventListener( 'resize', onWindowResize );
-
+				onWindowResize();
 			}
 
 			function onWindowResize() {
+				const currentWidth = window.innerWidth;
+				const scale = Math.min(1.0, currentWidth / baseWidth) * 0.9; // Уменьшим макс масштаб
+
+				if (textGroup) {
+					textGroup.scale.set(scale, scale, scale);
+				}
 
 				camera.aspect = window.innerWidth / window.innerHeight;
 				camera.updateProjectionMatrix();
-
 				renderer.setSize( window.innerWidth, window.innerHeight );
+			}
 
+			function onDocumentMouseMove(event) {
+				// Нормализуем координаты мыши (-1 to +1)
+				mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+				mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+				// Расчет целевого вращения в зависимости от позиции мыши (уменьшим влияние)
+				targetRotation.x = mouse.y * 0.15;
+				targetRotation.y = mouse.x * 0.15;
 			}
 
 			function animate() {
-
 				render();
-
 			}
 
 			function render() {
+				const time = Date.now() * 0.0005; // Замедлим время
 
-				const time = Date.now() * 0.001;
-
-				line.rotation.x = 0.25 * Math.sin(time);
-
-				uniforms.amplitude.value = Math.sin(2);
-				uniforms.color.value.offsetHSL( 0.0005, 0, 0 );
-
-				const attributes = line.geometry.attributes;
-				const array = attributes.displacement.array;
-
-				for ( let i = 0, l = array.length; i < l; i += 3 ) {
-
-					array[ i ] = Math.sin(time) * ( 0.5 - Math.random() );
-					array[ i + 1 ] = Math.sin(time) * ( 0.5 - Math.random() );
-					// array[ i + 2 ] += 0.1 * ( 0.5 - Math.random() );
-
+				if (textGroup) {
+					// Плавное вращение текста к целевому значению (слежение за мышью)
+					textGroup.rotation.x += (targetRotation.x - textGroup.rotation.x) * 0.05;
+					textGroup.rotation.y += (targetRotation.y - textGroup.rotation.y) * 0.05;
 				}
 
-				attributes.displacement.needsUpdate = true;
+				// Более стабильная анимация амплитуды
+				uniforms.amplitude.value = 1.2 + Math.sin(time * 0.5) * 0.3 + Math.cos(time * 0.8) * 0.3;
+				uniforms.color.value.offsetHSL( 0.0002, 0, 0 ); // Замедлим смену цвета
+
+				const attributes = line.geometry.attributes;
+				if (attributes.displacement) {
+					const array = attributes.displacement.array;
+					const noiseFactor = 0.1; // Еще немного уменьшим силу "шума"
+					const damping = 0.98; // Коэффициент затухания
+
+					for ( let i = 0, l = array.length; i < l; i += 3 ) {
+						// Обновляем целевое смещение реже
+						if (Math.random() < 0.01) {
+							displacementTarget[i] = noiseFactor * ( Math.random() - 0.5 ) * 2;
+							displacementTarget[i+1] = noiseFactor * ( Math.random() - 0.5 ) * 2;
+						}
+
+						// Плавно приближаем текущее смещение к целевому
+						array[ i ] += (displacementTarget[i] - array[i]) * 0.1;
+						array[ i + 1 ] += (displacementTarget[i+1] - array[i+1]) * 0.1;
+
+						// Добавляем затухание
+						array[i] *= damping;
+						array[i+1] *= damping;
+					}
+					attributes.displacement.needsUpdate = true;
+				}
 
 				renderer.render( scene, camera );
-
 			}
 
+			// Инициализация навигации по скроллу
+			function initScrollNav() {
+				const sections = document.querySelectorAll('.fullscreen-section');
+				const navLinks = document.querySelectorAll('#sideNav a');
+				const mainContainer = document.getElementById('mainScrollContainer');
+
+				const observerOptions = {
+					root: mainContainer, // Отслеживаем видимость внутри контейнера прокрутки
+					rootMargin: '0px',
+					threshold: 0.6
+				};
+
+				const observer = new IntersectionObserver((entries, observer) => {
+					entries.forEach(entry => {
+						if (entry.isIntersecting) {
+							const activeLink = document.querySelector(`#sideNav a[href="#${entry.target.id}"]`);
+							if (activeLink) {
+								navLinks.forEach(link => link.classList.remove('active'));
+								activeLink.classList.add('active');
+							}
+						}
+					});
+				}, observerOptions);
+
+				sections.forEach(section => {
+					observer.observe(section);
+				});
+			}
 
 		</script>
 

@@ -1,91 +1,265 @@
+html {
+	scroll-behavior: smooth;
+}
+
 body {
 	margin: 0;
-	background-color: #000;
+	background-color: #050505;
 	color: #fff;
 	font-family: Monospace;
-	font-size: 13px;
-	line-height: 24px;
-	overscroll-behavior: none;
-}
-
-a {
-	color: #ff0;
-	text-decoration: none;
-}
-
-a:hover {
-	text-decoration: underline;
-}
-
-button {
-	cursor: pointer;
-	text-transform: uppercase;
-}
-
-#info {
-	position: absolute;
-	top: 0px;
-	width: 100%;
-	padding: 10px;
-	box-sizing: border-box;
-	text-align: center;
-	-moz-user-select: none;
-	-webkit-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	pointer-events: none;
-	z-index: 1; /* TODO Solve this in HTML */
-}
-
-a, button, input, select {
-	pointer-events: auto;
-}
-
-.lil-gui {
-	z-index: 2 !important; /* TODO Solve this in HTML */
-}
-
-@media all and ( max-width: 640px ) {
-	.lil-gui.root { 
-		right: auto;
-		top: auto;
-		max-height: 50%;
-		max-width: 80%;
-		bottom: 0;
-		left: 0;
-	}
-}
-
-#overlay {
-	position: absolute;
 	font-size: 16px;
-	z-index: 2;
+	line-height: 1.6;
+	overscroll-behavior: none;
+	/* Убираем стандартную прокрутку body, т.к. она будет на #mainScrollContainer */
+	overflow: hidden;
+}
+
+/* Контейнер для прокрутки секций */
+#mainScrollContainer {
+	height: 100vh;
+	overflow-y: scroll;
+	scroll-snap-type: y mandatory;
+	scroll-behavior: smooth; /* Для плавной прокрутки по клику на nav */
+
+	/* Скрытие полосы прокрутки (кроссбраузерный подход) */
+	/* Firefox */
+	scrollbar-width: none;
+	/* IE 10+ */
+	-ms-overflow-style: none;
+}
+
+/* Скрытие полосы прокрутки (WebKit/Blink - Chrome, Safari, Edge, Opera) */
+#mainScrollContainer::-webkit-scrollbar {
+	display: none;
+}
+
+.fullscreen-section {
+	height: 100vh;
+	width: 100%;
+	scroll-snap-align: start;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative; /* Для позиционирования .content-wrapper */
+	box-sizing: border-box;
+}
+
+/* Первая секция с Three.js */
+#section0 {
+	background-color: #050505;
+}
+
+/* Текстовые секции */
+.text-section {
+	background: linear-gradient(180deg, #0a0a0a 0%, #101015 100%);
+	padding: 40px;
+}
+
+#container {
+	width: 100%;
+	height: 100%; /* Занимает всю высоту секции */
+	position: absolute; /* Чтобы быть под контентом, если нужно */
 	top: 0;
 	left: 0;
-	width: 100%;
-	height: 100%;
 	display: flex;
-	align-items: center;
 	justify-content: center;
-	flex-direction: column;
-	background: rgba(0,0,0,0.7);
+	align-items: center;
 }
 
-	#overlay button {
-		background: transparent;
-		border: 0;
-		border: 1px solid rgb(255, 255, 255);
-		border-radius: 4px;
-		color: #ffffff;
-		padding: 12px 18px;
-		text-transform: uppercase;
-		cursor: pointer;
+#container canvas {
+	display: block; /* Убираем лишнее пространство под canvas */
+}
+
+.content-wrapper {
+	max-width: 800px;
+	text-align: center;
+	background-color: rgba(0, 0, 0, 0.4);
+	padding: 40px;
+	border-radius: 15px;
+	box-shadow: 0 10px 30px rgba(79, 195, 247, 0.15);
+	z-index: 1; /* Выше canvas */
+	position: relative;
+}
+
+.content-wrapper h2 {
+	color: #4fc3f7;
+	font-size: 36px;
+	margin-bottom: 25px;
+	text-shadow: 0 0 15px rgba(79, 195, 247, 0.7);
+	letter-spacing: 2px;
+}
+
+.content-wrapper p {
+	font-size: 18px;
+	line-height: 1.7;
+	color: rgba(255, 255, 255, 0.9);
+	text-align: justify;
+	text-shadow: 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+/* Стили для списка проектов */
+.project-list {
+	list-style: none;
+	padding: 0;
+	margin-top: 30px; /* Отступ сверху */
+	text-align: left; /* Выравнивание текста в списке по левому краю */
+}
+
+.project-list li {
+	margin-bottom: 25px; /* Отступ между проектами */
+	padding-bottom: 25px;
+	border-bottom: 1px solid rgba(79, 195, 247, 0.15);
+}
+
+.project-list li:last-child {
+	margin-bottom: 0;
+	border-bottom: none;
+	padding-bottom: 0;
+}
+
+.project-list p {
+	margin-bottom: 10px; /* Отступ под описанием */
+	text-align: left;
+}
+
+.project-list strong {
+	color: #61dafb; /* Цвет акцента для названия проекта */
+}
+
+.project-link {
+	color: #4fc3f7;
+	text-decoration: none;
+	border-bottom: 1px dotted #4fc3f7;
+	transition: color 0.3s ease, border-bottom-color 0.3s ease;
+	font-weight: bold;
+}
+
+.project-link:hover {
+	color: #81d4fa;
+	border-bottom-color: #81d4fa;
+}
+
+/* Боковая навигация */
+#sideNav {
+	position: fixed;
+	top: 50%;
+	right: 20px;
+	transform: translateY(-50%);
+	z-index: 100;
+}
+
+#sideNav ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+#sideNav li {
+	margin: 15px 0;
+}
+
+#sideNav a {
+	display: block;
+	width: 12px;
+	height: 12px;
+	background-color: rgba(255, 255, 255, 0.3);
+	border-radius: 50%;
+	position: relative;
+	transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#sideNav a span {
+	/* Скрываем текст, но оставляем для доступности */
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border-width: 0;
+
+	/* Показываем текст при наведении на кружок */
+	visibility: hidden;
+	background-color: rgba(0, 0, 0, 0.8);
+	color: #fff;
+	padding: 5px 10px;
+	border-radius: 4px;
+	position: absolute;
+	top: 50%;
+	right: 150%; /* Слева от кружка */
+	transform: translateY(-50%);
+	white-space: nowrap;
+	font-size: 12px;
+	opacity: 0;
+	transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+#sideNav a:hover {
+	transform: scale(1.3);
+	background-color: rgba(255, 255, 255, 0.6);
+}
+
+#sideNav a:hover span {
+	visibility: visible;
+	opacity: 1;
+}
+
+#sideNav a.active {
+	background-color: #4fc3f7;
+	transform: scale(1.5);
+	box-shadow: 0 0 10px rgba(79, 195, 247, 0.7);
+}
+
+/* Старые стили (удаляем или комментируем) */
+/* #pageContent, .page, .pagination, #pageIndicator, .content-wrapper (старый), @keyframes */
+#pageContent, .pagination, #pageIndicator {
+	display: none; /* Скрываем старые элементы пагинации */
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+	.content-wrapper {
+		max-width: 90%;
+		padding: 30px;
 	}
 
-#notSupported {
-	width: 50%;
-	margin: auto;
-	background-color: #f00;
-	margin-top: 20px;
-	padding: 10px;
+	.content-wrapper h2 {
+		font-size: 28px;
+	}
+
+	.content-wrapper p {
+		font-size: 16px;
+	}
+
+	#sideNav {
+		right: 10px;
+	}
+
+	#sideNav a {
+		width: 10px;
+		height: 10px;
+	}
+	#sideNav li {
+		margin: 12px 0;
+	}
+
+}
+
+@media (max-width: 480px) {
+	.text-section {
+		padding: 20px;
+	}
+	.content-wrapper {
+		padding: 20px;
+	}
+	.content-wrapper h2 {
+		font-size: 24px;
+	}
+
+	.content-wrapper p {
+		font-size: 14px;
+	}
+
 }
