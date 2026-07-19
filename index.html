@@ -1,316 +1,528 @@
 <!DOCTYPE html>
-<html lang="en">
-	<head>
-		<title>researchim.ai</title>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-		<link type="text/css" rel="stylesheet" href="src/main.css">
-	</head>
+<html lang="ru">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>researchim.ai — исследования ИИ, RL и LLM</title>
+	<meta name="description" content="researchim.ai — независимая исследовательская группа: reasoning, обучение с подкреплением (RL), большие языковые модели (LLM), tool calling и прикладной ИИ. Открытые проекты и сообщество.">
+	<meta name="theme-color" content="#0a0c0b">
+	<meta name="author" content="researchim.ai">
 
-	<body>
-		<nav id="sideNav">
-			<ul>
-				<li><a href="#section0" class="active"><span>Home</span></a></li>
-				<li><a href="#section1"><span>О нас</span></a></li>
-				<li><a href="#section2"><span>Проекты</span></a></li>
-			</ul>
-		</nav>
+	<!-- Open Graph / Twitter -->
+	<meta property="og:type" content="website">
+	<meta property="og:title" content="researchim.ai — исследования ИИ, RL и LLM">
+	<meta property="og:description" content="Независимая исследовательская группа: reasoning, RL, LLM, tool calling и прикладной ИИ. Открытые проекты и сообщество.">
+	<meta property="og:url" content="https://researchim-ai.github.io/">
+	<meta property="og:site_name" content="researchim.ai">
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:title" content="researchim.ai — исследования ИИ, RL и LLM">
+	<meta name="twitter:description" content="Независимая исследовательская группа: reasoning, RL, LLM, tool calling и прикладной ИИ.">
 
-		<div id="mainScrollContainer">
-			<section id="section0" class="fullscreen-section">
-				<div id="container"></div>
-			</section>
-			<section id="section1" class="fullscreen-section text-section">
-				<div class="content-wrapper">
-					<h2>О нас</h2>
-					<p>Мы в researchim изучаем и иногда делаем проекты по ИИ, RL и LLM</p>
-					<p>Собираемся в Telegram: <a href="https://t.me/researchim" target="_blank" rel="noopener noreferrer" class="project-link">Researchim</a></p>
-					<h2>Присоединяйтесь</h2>
-				</div>
-			</section>
-			<section id="section2" class="fullscreen-section text-section">
-				<div class="content-wrapper">
-					<h2>Проекты</h2>
-					<ul class="project-list">
-						<li>
-							<p><strong>re-rl:</strong> Библиотека для генерации искусственных математических и логических задач для обучения LLM навыкам reasoning с использованием RL.</p>
-							<a href="https://github.com/researchim-ai/re-rl" target="_blank" rel="noopener noreferrer" class="project-link">GitHub репозиторий</a>
-						</li>
-						<li>
-							<p><strong>re-tiny-grpo:</strong> Минималистичная имплементация multiturn GRPO алгоритма для обучения LLM использованию инструментов (tool calling).</p>
-							<a href="https://github.com/researchim-ai/re-tiny-grpo" target="_blank" rel="noopener noreferrer" class="project-link">GitHub репозиторий</a>
-						</li>
-						<li>
-							<p><strong>re-oil-production-llm:</strong> Библиотека с симуляторами скважин для экспериментов по оптимизация добычи нефти с использованием LLM.</p>
-							<a href="https://github.com/researchim-ai/re-oil-production-llm" target="_blank" rel="noopener noreferrer" class="project-link">GitHub репозиторий</a>
-						</li>
-					</ul>
-				</div>
-			</section>
+	<link rel="icon" href="src/favicon.svg" type="image/svg+xml">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="src/main.css">
+</head>
+
+<body>
+	<!-- Фоновые слои -->
+	<canvas id="bg-canvas" aria-hidden="true"></canvas>
+	<div class="bg-grid" aria-hidden="true"></div>
+	<div class="bg-glow bg-glow--1" aria-hidden="true"></div>
+	<div class="bg-glow bg-glow--2" aria-hidden="true"></div>
+
+	<!-- Прелоадер прогресса скролла -->
+	<div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+	<!-- Навигация -->
+	<header class="nav" id="nav">
+		<div class="nav__inner">
+			<a href="#hero" class="brand" aria-label="researchim.ai — на главную">
+				<span class="brand__mark" aria-hidden="true">
+					<svg viewBox="0 0 32 32" width="28" height="28" fill="none">
+						<rect x="1.5" y="1.5" width="29" height="29" rx="8" stroke="url(#brandStroke)" stroke-width="1.6"/>
+						<circle cx="10" cy="16" r="2.4" fill="#6ee7b7"/>
+						<circle cx="22" cy="10" r="2.4" fill="#34d399"/>
+						<circle cx="22" cy="22" r="2.4" fill="#10b981"/>
+						<path d="M10 16 L22 10 M10 16 L22 22 M22 10 L22 22" stroke="url(#brandStroke)" stroke-width="1.4"/>
+						<defs>
+							<linearGradient id="brandStroke" x1="0" y1="0" x2="32" y2="32">
+								<stop stop-color="#6ee7b7"/>
+								<stop offset="1" stop-color="#10b981"/>
+							</linearGradient>
+						</defs>
+					</svg>
+				</span>
+				<span class="brand__text">researchim<span class="brand__accent">.ai</span></span>
+			</a>
+
+			<nav class="nav__links" aria-label="Главная навигация">
+				<a href="#about">О нас</a>
+				<a href="#playground">RL-песочница</a>
+				<a href="#projects">Проекты</a>
+				<a href="#join">Сообщество</a>
+			</nav>
+
+			<div class="nav__actions">
+				<a href="https://github.com/researchim-ai" target="_blank" rel="noopener noreferrer" class="btn btn--ghost btn--icon" aria-label="GitHub">
+					<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.73.5.5 5.73.5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.08 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5Z"/></svg>
+				</a>
+				<a href="https://t.me/researchim" target="_blank" rel="noopener noreferrer" class="btn btn--primary">Telegram</a>
+			</div>
+
+			<button class="nav__burger" id="navBurger" aria-label="Меню" aria-expanded="false">
+				<span></span><span></span><span></span>
+			</button>
 		</div>
+	</header>
 
-		<script type="x-shader/x-vertex" id="vertexshader">
+	<main>
+		<!-- HERO -->
+		<section id="hero" class="hero">
+			<div class="hero__content reveal">
+				<div class="badge">
+					<span class="badge__dot"></span>
+					<strong>Reinforcement Learning</strong>&nbsp;· reasoning · LLM
+				</div>
+				<h1 class="hero__title">
+					Учим машины<br>
+					<span class="grad-text">действовать и рассуждать</span>
+				</h1>
+				<p class="hero__subtitle">
+					researchim — независимая исследовательская группа с фокусом на
+					<b style="color:var(--accent);font-weight:600">обучении с подкреплением&nbsp;(RL)</b>.
+					Мы учим модели принимать решения, рассуждать и действовать — и превращаем
+					это в открытые инструменты.
+				</p>
+				<div class="hero__actions">
+					<a href="#projects" class="btn btn--primary btn--lg">Наши проекты</a>
+					<a href="#join" class="btn btn--ghost btn--lg">Присоединиться</a>
+				</div>
 
-			uniform float amplitude;
+				<div class="hero__stats">
+					<div class="stat">
+						<span class="stat__num" data-count="12">0</span>
+						<span class="stat__label">открытых проектов</span>
+					</div>
+					<div class="stat">
+						<span class="stat__num">RL</span>
+						<span class="stat__label">+ reasoning</span>
+					</div>
+					<div class="stat">
+						<span class="stat__num">LLM</span>
+						<span class="stat__label">+ tool calling</span>
+					</div>
+					<div class="stat">
+						<span class="stat__num">Open</span>
+						<span class="stat__label">source first</span>
+					</div>
+				</div>
+			</div>
 
-			attribute vec3 displacement;
-			attribute vec3 customColor;
+			<a href="#about" class="scroll-hint" aria-label="Прокрутить вниз">
+				<span></span>
+			</a>
+		</section>
 
-			varying vec3 vColor;
+		<!-- ABOUT -->
+		<section id="about" class="section">
+			<div class="section__head reveal">
+				<span class="eyebrow">// о нас</span>
+				<h2 class="section__title">Чем мы занимаемся</h2>
+				<p class="section__lead">
+					researchim — это исследования и открытые инструменты вокруг всего стека
+					современного ИИ: от обучения моделей рассуждать и действовать до
+					симуляторов физического мира, локальных агентов и прикладных проектов
+					в индустрии.
+				</p>
+			</div>
 
-			void main() {
+			<div class="cards">
+				<article class="card reveal">
+					<div class="card__icon" aria-hidden="true">
+						<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a4 4 0 0 0-4 4v1a3 3 0 0 0 0 6v1a4 4 0 0 0 8 0v-1a3 3 0 0 0 0-6V7a4 4 0 0 0-4-4Z"/><path d="M12 3v18"/></svg>
+					</div>
+					<h3>Reasoning &amp; RL</h3>
+					<p>Учим модели рассуждать и действовать: синтетические датасеты для reasoning и собственные реализации алгоритмов обучения с подкреплением (GRPO, multiturn, tool calling).</p>
+				</article>
 
-				vec3 newPosition = position + amplitude * displacement;
+				<article class="card reveal">
+					<div class="card__icon" aria-hidden="true">
+						<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/><path d="m8 9 3 3-3 3M13 15h3"/></svg>
+					</div>
+					<h3>Обучение моделей</h3>
+					<p>Строим удобную визуальную студию, чтобы каждый мог тренировать свои модели дома — от pretrain и SFT до GRPO — в едином интерфейсе.</p>
+				</article>
 
-				vColor = customColor;
+				<article class="card reveal">
+					<div class="card__icon" aria-hidden="true">
+						<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 1 5h8c0-2 1-3 1-5a5 5 0 0 0-5-5Z"/><path d="M9 17h6M10 21h4"/></svg>
+					</div>
+					<h3>Локальные агенты</h3>
+					<p>Полностью локальные кодинг- и research-агенты на базе Qwen: приватность, deep research и автоматизация без облака.</p>
+				</article>
 
-				gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
+				<article class="card reveal">
+					<div class="card__icon" aria-hidden="true">
+						<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 2a10 10 0 0 1 0 20M12 2a10 10 0 0 0 0 20" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/></svg>
+					</div>
+					<h3>Симуляторы мира</h3>
+					<p>Пишем симуляторы физического мира — нефтяной пласт, квантовый компьютер, атомный реактор — как среды для экспериментов с LLM и RL.</p>
+				</article>
 
-			}
+				<article class="card reveal">
+					<div class="card__icon" aria-hidden="true">
+						<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M6 21V9l6-4 6 4v12"/><path d="M10 21v-6h4v6"/></svg>
+					</div>
+					<h3>Прикладной ИИ</h3>
+					<p>Переносим методы ИИ в реальные индустрии: оптимизация добычи нефти с помощью LLM и распознавание документов через тюнинг VLM-моделей.</p>
+				</article>
 
-		</script>
+				<article class="card reveal">
+					<div class="card__icon" aria-hidden="true">
+						<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/><path d="M13 3v5h5M8 13h8M8 17h5"/></svg>
+					</div>
+					<h3>Знания и быстрый старт</h3>
+					<p>Собираем базу знаний по ИИ и его применению в отраслях, а также туторы и инструкции для быстрого входа в область.</p>
+				</article>
+			</div>
+		</section>
 
-		<script type="x-shader/x-fragment" id="fragmentshader">
+		<!-- FOCUS / APPROACH -->
+		<section id="focus" class="section">
+			<div class="section__head reveal">
+				<span class="eyebrow">// подход</span>
+				<h2 class="section__title">Как мы работаем</h2>
+			</div>
 
-			uniform vec3 color;
-			uniform float opacity;
+			<div class="timeline">
+				<div class="timeline__item reveal">
+					<span class="timeline__step">01</span>
+					<h3>Исследуем</h3>
+					<p>Читаем свежие статьи, воспроизводим результаты и проверяем гипотезы на практике.</p>
+				</div>
+				<div class="timeline__item reveal">
+					<span class="timeline__step">02</span>
+					<h3>Экспериментируем</h3>
+					<p>Строим минимальные, но рабочие прототипы алгоритмов RL и reasoning для LLM.</p>
+				</div>
+				<div class="timeline__item reveal">
+					<span class="timeline__step">03</span>
+					<h3>Открываем код</h3>
+					<p>Публикуем понятные open-source библиотеки, чтобы результатами могли пользоваться все.</p>
+				</div>
+				<div class="timeline__item reveal">
+					<span class="timeline__step">04</span>
+					<h3>Делимся</h3>
+					<p>Обсуждаем идеи и находки в сообществе — учимся вместе.</p>
+				</div>
+			</div>
+		</section>
 
-			varying vec3 vColor;
+		<!-- RL PLAYGROUND -->
+		<section id="playground" class="section">
+			<div class="section__head reveal">
+				<span class="eyebrow">// reinforcement learning</span>
+				<h2 class="section__title">RL-песочница</h2>
+				<p class="section__lead">
+					Мы — про обучение с подкреплением, так что вот живой пример прямо в браузере.
+					Настоящий табличный <b>Q-learning</b> в гридворлде: агент методом проб и ошибок
+					учится доходить до награды <span class="grad-text">+1</span> и обходить штрафы −1.
+					Обучите его — или пройдите поле сами.
+				</p>
+			</div>
 
-			void main() {
+			<div class="game reveal">
+				<div class="game__board">
+					<canvas id="gameCanvas" width="560" height="420" role="img" aria-label="Гридворлд RL: агент, награда и штрафы"></canvas>
+					<div class="game__legend">
+						<span><i class="sq sq--agent"></i>Агент</span>
+						<span><i class="sq sq--goal"></i>Награда +1</span>
+						<span><i class="sq sq--pit"></i>Штраф −1</span>
+						<span><i class="sq sq--q"></i>Функция ценности + политика</span>
+					</div>
+				</div>
 
-				gl_FragColor = vec4( vColor * color, opacity );
+				<div class="game__panel">
+					<div class="game__stats">
+						<div><span id="statEpisode">0</span><small>эпизод</small></div>
+						<div><span id="statReward">0.00</span><small>reward / эпизод</small></div>
+						<div><span id="statBest">—</span><small>лучший reward</small></div>
+						<div><span id="statEps">1.00</span><small>ε — исследование</small></div>
+					</div>
 
-			}
+					<canvas id="rewardChart" class="game__chart" width="480" height="90" aria-hidden="true"></canvas>
 
-		</script>
+					<div class="game__controls">
+						<button id="btnTrain" class="btn btn--primary btn--sm">▶ Обучить агента</button>
+						<button id="btnWatch" class="btn btn--ghost btn--sm">Смотреть политику</button>
+						<button id="btnPlay" class="btn btn--ghost btn--sm">Играть самому</button>
+						<button id="btnReset" class="btn btn--ghost btn--sm">Сбросить</button>
+					</div>
 
-		<script type="importmap">
-			{
-				"imports": {
-					"three": "./src/three.module.js",
-					"src/": "./src/"
-				}
-			}
-		</script>
+					<p class="game__hint" id="gameHint">
+						Нажмите <b>«Обучить агента»</b> — и смотрите, как растёт награда, а по клеткам
+						проявляется выученная политика. Или играйте сами: <b>стрелки / WASD</b>.
+					</p>
+				</div>
+			</div>
+		</section>
 
-		<script type="module">
+		<!-- PROJECTS -->
+		<section id="projects" class="section">
+			<div class="section__head reveal">
+				<span class="eyebrow">// open source</span>
+				<h2 class="section__title">Проекты</h2>
+				<p class="section__lead">Открытые проекты, которые мы разрабатываем и поддерживаем — от обучения моделей и агентов до симуляторов и прикладного ИИ.</p>
+			</div>
 
-			import * as THREE from 'three';
+			<div class="filters reveal" id="projectFilters" role="tablist" aria-label="Фильтр проектов">
+				<button class="filter is-active" data-filter="all">Все</button>
+				<button class="filter" data-filter="training">Обучение моделей</button>
+				<button class="filter" data-filter="agents">Агенты</button>
+				<button class="filter" data-filter="sim">Симуляторы</button>
+				<button class="filter" data-filter="applied">Прикладной ИИ</button>
+				<button class="filter" data-filter="knowledge">Знания</button>
+			</div>
 
-			import { FontLoader } from 'src/FontLoader.js';
-			import { TextGeometry } from 'src/TextGeometry.js';
+			<div class="projects" id="projectsGrid">
+				<!-- models-at-home (флагман) -->
+				<article class="project project--featured reveal" data-cat="training">
+					<span class="project__badge">Флагман</span>
+					<div class="project__top">
+						<span class="project__lang"><span class="dot dot--cyan"></span>studio</span>
+						<a href="https://github.com/researchim-ai/models-at-home" target="_blank" rel="noopener noreferrer" class="project__ext" aria-label="Открыть на GitHub">
+							<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+						</a>
+					</div>
+					<h3 class="project__name">models-at-home</h3>
+					<p class="project__desc">Визуальная студия, чтобы удобно обучать модели прямо у себя дома — единая точка входа как для новичков, так и для тех, кто уже тренирует модели разных размеров. Сейчас: LLM (pretrain / SFT / GRPO), в планах — DL-модели по многим направлениям.</p>
+					<div class="project__tags">
+						<span>studio</span><span>training</span><span>LLM</span><span>UI</span>
+					</div>
+					<a href="https://github.com/researchim-ai/models-at-home" target="_blank" rel="noopener noreferrer" class="project__link">GitHub репозиторий →</a>
+				</article>
 
-			let renderer, scene, camera;
-			let textGroup, line, aiMesh, uniforms;
-			const baseWidth = 1200; // Базовая ширина для масштабирования (немного увеличим)
-			let mouse = new THREE.Vector2();
-			let targetRotation = new THREE.Vector2();
-			let displacementTarget = []; // Для плавного смещения
+				<!-- re-grpo -->
+				<article class="project reveal" data-cat="training">
+					<div class="project__top">
+						<span class="project__lang"><span class="dot dot--violet"></span>RL / GRPO</span>
+						<a href="https://github.com/researchim-ai/re-grpo" target="_blank" rel="noopener noreferrer" class="project__ext" aria-label="Открыть на GitHub">
+							<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+						</a>
+					</div>
+					<h3 class="project__name">re-grpo</h3>
+					<p class="project__desc">Собственная имплементация GRPO на базе проекта tiny-grpo: добавлены примеры с использованием инструментов и multiturn GRPO. В планах — навести порядок и завести улучшения из статьи Dr. GRPO.</p>
+					<div class="project__tags">
+						<span>RL</span><span>GRPO</span><span>tool calling</span>
+					</div>
+					<a href="https://github.com/researchim-ai/re-grpo" target="_blank" rel="noopener noreferrer" class="project__link">GitHub репозиторий →</a>
+				</article>
 
-			const loader = new FontLoader();
-			loader.load( 'src/helvetiker_bold.typeface.json', function ( font ) {
+				<!-- re-rl -->
+				<article class="project reveal" data-cat="training">
+					<div class="project__top">
+						<span class="project__lang"><span class="dot dot--cyan"></span>reasoning</span>
+						<a href="https://github.com/researchim-ai/re-rl" target="_blank" rel="noopener noreferrer" class="project__ext" aria-label="Открыть на GitHub">
+							<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+						</a>
+					</div>
+					<h3 class="project__name">re-rl</h3>
+					<p class="project__desc">Генерация синтетических датасетов для reasoning: логические и математические задачки для обучения моделей рассуждать. Направление с огромным пространством для развития.</p>
+					<div class="project__tags">
+						<span>RL</span><span>reasoning</span><span>datasets</span>
+					</div>
+					<a href="https://github.com/researchim-ai/re-rl" target="_blank" rel="noopener noreferrer" class="project__link">GitHub репозиторий →</a>
+				</article>
 
-				init( font );
-				initScrollNav();
-			} );
+				<!-- one-click-coding-agent -->
+				<article class="project reveal" data-cat="agents">
+					<div class="project__top">
+						<span class="project__lang"><span class="dot dot--blue"></span>agent</span>
+						<a href="https://github.com/researchim-ai/one-click-coding-agent" target="_blank" rel="noopener noreferrer" class="project__ext" aria-label="Открыть на GitHub">
+							<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+						</a>
+					</div>
+					<h3 class="project__name">one-click-coding-agent</h3>
+					<p class="project__desc">Полностью локальный кодинговый агент на базе моделей Qwen — помощник-программист, который работает целиком на вашей машине, без облака.</p>
+					<div class="project__tags">
+						<span>agents</span><span>coding</span><span>Qwen</span><span>local</span>
+					</div>
+					<a href="https://github.com/researchim-ai/one-click-coding-agent" target="_blank" rel="noopener noreferrer" class="project__link">GitHub репозиторий →</a>
+				</article>
 
-			function init( font ) {
+				<!-- one-click-research-agent -->
+				<article class="project reveal" data-cat="agents">
+					<div class="project__top">
+						<span class="project__lang"><span class="dot dot--violet"></span>agent</span>
+						<a href="https://github.com/researchim-ai/one-click-research-agent" target="_blank" rel="noopener noreferrer" class="project__ext" aria-label="Открыть на GitHub">
+							<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+						</a>
+					</div>
+					<h3 class="project__name">one-click-research-agent</h3>
+					<p class="project__desc">Полностью локальный research-агент на базе Qwen с поддержкой deep research — ищет, читает и анализирует источники прямо на вашей машине.</p>
+					<div class="project__tags">
+						<span>agents</span><span>research</span><span>deep research</span><span>Qwen</span>
+					</div>
+					<a href="https://github.com/researchim-ai/one-click-research-agent" target="_blank" rel="noopener noreferrer" class="project__link">GitHub репозиторий →</a>
+				</article>
 
-				camera = new THREE.PerspectiveCamera( 30, window.innerWidth / window.innerHeight, 1, 10000 );
-				camera.position.z = 450; // Немного дальше
+				<!-- oil-simulator-py -->
+				<article class="project reveal" data-cat="sim">
+					<div class="project__top">
+						<span class="project__lang"><span class="dot dot--blue"></span>simulator</span>
+						<a href="https://github.com/researchim-ai/oil-simulator-py" target="_blank" rel="noopener noreferrer" class="project__ext" aria-label="Открыть на GitHub">
+							<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+						</a>
+					</div>
+					<h3 class="project__name">oil-simulator-py</h3>
+					<p class="project__desc">Полноценный симулятор нефтедобычи. Уже есть моделирование пласта, нагнетательные (закачка воды) и добывающие скважины. Дальше — связность между скважинами и остальная инфраструктура.</p>
+					<div class="project__tags">
+						<span>simulation</span><span>physics</span><span>oil&amp;gas</span>
+					</div>
+					<a href="https://github.com/researchim-ai/oil-simulator-py" target="_blank" rel="noopener noreferrer" class="project__link">GitHub репозиторий →</a>
+				</article>
 
-				scene = new THREE.Scene();
-				scene.background = null; // Прозрачный фон для Canvas
+				<!-- quantum-computing-sim-py -->
+				<article class="project reveal" data-cat="sim">
+					<div class="project__top">
+						<span class="project__lang"><span class="dot dot--cyan"></span>simulator</span>
+						<a href="https://github.com/researchim-ai/quantum-computing-sim-py" target="_blank" rel="noopener noreferrer" class="project__ext" aria-label="Открыть на GitHub">
+							<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+						</a>
+					</div>
+					<h3 class="project__name">quantum-computing-sim-py</h3>
+					<p class="project__desc">Симулятор квантовых вычислений с возможностью подключения LLM и RL — среда для экспериментов над квантовыми алгоритмами и обучением агентов.</p>
+					<div class="project__tags">
+						<span>quantum</span><span>simulation</span><span>LLM / RL</span>
+					</div>
+					<a href="https://github.com/researchim-ai/quantum-computing-sim-py" target="_blank" rel="noopener noreferrer" class="project__link">GitHub репозиторий →</a>
+				</article>
 
-				uniforms = {
-					amplitude: { value: 1.5 }, // Уменьшим начальную амплитуду
-					opacity: { value: 0.4 }, // Чуть менее прозрачный
-					color: { value: new THREE.Color( 0xffffff ) }
-				};
+				<!-- atomic-sim -->
+				<article class="project reveal" data-cat="sim">
+					<div class="project__top">
+						<span class="project__lang"><span class="dot dot--violet"></span>simulator</span>
+						<a href="https://github.com/researchim-ai/atomic-sim" target="_blank" rel="noopener noreferrer" class="project__ext" aria-label="Открыть на GitHub">
+							<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+						</a>
+					</div>
+					<h3 class="project__name">atomic-sim</h3>
+					<p class="project__desc">Симулятор атомного реактора — среда для моделирования процессов и экспериментов, в том числе как площадка для ИИ-агентов.</p>
+					<div class="project__tags">
+						<span>simulation</span><span>physics</span><span>nuclear</span>
+					</div>
+					<a href="https://github.com/researchim-ai/atomic-sim" target="_blank" rel="noopener noreferrer" class="project__link">GitHub репозиторий →</a>
+				</article>
 
-				const shaderMaterial = new THREE.ShaderMaterial( {
-					uniforms: uniforms,
-					vertexShader: document.getElementById( 'vertexshader' ).textContent,
-					fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
-					blending: THREE.AdditiveBlending,
-					depthTest: false,
-					transparent: true
-				} );
+				<!-- re-oil-production-llm -->
+				<article class="project reveal" data-cat="applied">
+					<div class="project__top">
+						<span class="project__lang"><span class="dot dot--blue"></span>НефтьГПТ</span>
+						<a href="https://github.com/researchim-ai/re-oil-production-llm" target="_blank" rel="noopener noreferrer" class="project__ext" aria-label="Открыть на GitHub">
+							<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+						</a>
+					</div>
+					<h3 class="project__name">re-oil-production-llm</h3>
+					<p class="project__desc">LLM в добыче нефти: моделирование скважин и обучение моделей на данных. Сейчас активно прорабатывается генерация данных для сбора датасетов. В перспективе проект перерастёт в НефтьГПТ.</p>
+					<div class="project__tags">
+						<span>LLM</span><span>oil&amp;gas</span><span>datasets</span>
+					</div>
+					<a href="https://github.com/researchim-ai/re-oil-production-llm" target="_blank" rel="noopener noreferrer" class="project__link">GitHub репозиторий →</a>
+				</article>
 
-				const geometry = new TextGeometry( 'researchim', {
-					font: font,
-					size: 50,
-					depth: 10, // Менее глубокий
-					curveSegments: 8,
-					bevelThickness: 2,
-					bevelSize: 0.8,
-					bevelEnabled: true,
-					bevelSegments: 5,
-				} );
-				geometry.center();
+				<!-- re-synthetic-docs -->
+				<article class="project reveal" data-cat="applied">
+					<div class="project__top">
+						<span class="project__lang"><span class="dot dot--cyan"></span>VLM</span>
+						<a href="https://github.com/researchim-ai/re-synthetic-docs" target="_blank" rel="noopener noreferrer" class="project__ext" aria-label="Открыть на GitHub">
+							<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+						</a>
+					</div>
+					<h3 class="project__name">re-synthetic-docs</h3>
+					<p class="project__desc">Генерация синтетических документов для тюнинга VLM-моделей под задачи распознавания документов.</p>
+					<div class="project__tags">
+						<span>VLM</span><span>synthetic data</span><span>OCR</span>
+					</div>
+					<a href="https://github.com/researchim-ai/re-synthetic-docs" target="_blank" rel="noopener noreferrer" class="project__link">GitHub репозиторий →</a>
+				</article>
 
-				const count = geometry.attributes.position.count;
-				const displacement = new THREE.Float32BufferAttribute( count * 3, 3 );
-				geometry.setAttribute( 'displacement', displacement );
-				displacementTarget = new Float32Array(count * 3); // Инициализация массива для целевых смещений
-				const customColor = new THREE.Float32BufferAttribute( count * 3, 3 );
-				geometry.setAttribute( 'customColor', customColor );
-				const color = new THREE.Color( 0xffffff );
-				for ( let i = 0, l = customColor.count; i < l; i ++ ) {
-					color.setHSL( 0.5 + Math.sin(i / l * Math.PI) * 0.1, 0.6, 0.6 ); // Более интересный цвет
-					color.toArray( customColor.array, i * customColor.itemSize );
-				}
+				<!-- state-of-ai -->
+				<article class="project reveal" data-cat="knowledge">
+					<div class="project__top">
+						<span class="project__lang"><span class="dot dot--violet"></span>knowledge</span>
+						<a href="https://github.com/researchim-ai/state-of-ai" target="_blank" rel="noopener noreferrer" class="project__ext" aria-label="Открыть на GitHub">
+							<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+						</a>
+					</div>
+					<h3 class="project__name">state-of-ai</h3>
+					<p class="project__desc">База знаний об ИИ по отраслям: где и как применяется искусственный интеллект, большие вводные и учебные материалы по разделам ИИ и ML (в том числе ресёчи).</p>
+					<div class="project__tags">
+						<span>knowledge</span><span>industry</span><span>education</span>
+					</div>
+					<a href="https://github.com/researchim-ai/state-of-ai" target="_blank" rel="noopener noreferrer" class="project__link">GitHub репозиторий →</a>
+				</article>
 
-				line = new THREE.Line( geometry, shaderMaterial );
+				<!-- fast-start-ai -->
+				<article class="project reveal" data-cat="knowledge">
+					<div class="project__top">
+						<span class="project__lang"><span class="dot dot--blue"></span>guides</span>
+						<a href="https://github.com/researchim-ai/fast-start-ai" target="_blank" rel="noopener noreferrer" class="project__ext" aria-label="Открыть на GitHub">
+							<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+						</a>
+					</div>
+					<h3 class="project__name">fast-start-ai</h3>
+					<p class="project__desc">Материалы для быстрого старта в ИИ: туторы, инструкции по развёртыванию инструментов и практические гайды для тех, кто только входит в область.</p>
+					<div class="project__tags">
+						<span>education</span><span>tutorials</span><span>guides</span>
+					</div>
+					<a href="https://github.com/researchim-ai/fast-start-ai" target="_blank" rel="noopener noreferrer" class="project__link">GitHub репозиторий →</a>
+				</article>
+			</div>
+		</section>
 
-				const aiGeometry = new TextGeometry( '.ai', {
-					font: font,
-					size: 50,
-					depth: 10,
-					curveSegments: 8,
-					bevelThickness: 2,
-					bevelSize: 0.8,
-					bevelEnabled: true,
-					bevelSegments: 5,
-				} );
-				aiGeometry.center();
+		<!-- JOIN / COMMUNITY -->
+		<section id="join" class="section">
+			<div class="join reveal">
+				<div class="join__glow" aria-hidden="true"></div>
+				<span class="eyebrow">// сообщество</span>
+				<h2 class="join__title">Присоединяйтесь к <span class="grad-text">researchim</span></h2>
+				<p class="join__lead">
+					Обсуждаем ИИ, RL и LLM, делимся статьями, экспериментами и кодом.
+					Открыты для всех, кому интересно исследовать интеллект.
+				</p>
+				<div class="join__actions">
+					<a href="https://t.me/researchim" target="_blank" rel="noopener noreferrer" class="btn btn--primary btn--lg">
+						<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M9.5 15.3 9.3 19c.4 0 .6-.2.8-.4l2-1.9 4.1 3c.8.4 1.3.2 1.5-.7l2.7-12.6c.3-1.1-.4-1.6-1.1-1.3L2.9 9.5c-1.1.4-1.1 1-.2 1.3l4.4 1.4L17.3 6c.5-.3.9-.1.5.2L9.5 15.3Z"/></svg>
+						Telegram-сообщество
+					</a>
+					<a href="https://github.com/researchim-ai" target="_blank" rel="noopener noreferrer" class="btn btn--ghost btn--lg">
+						<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.73.5.5 5.73.5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.08 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5Z"/></svg>
+						GitHub
+					</a>
+				</div>
+			</div>
+		</section>
+	</main>
 
-				const aiMaterial = new THREE.ShaderMaterial({
-					uniforms: {
-						color: { value: new THREE.Color(0x61dafb) }, // Цвет React blue
-						opacity: { value: 0.8 }
-					},
-					vertexShader: document.getElementById('vertexshader').textContent,
-					fragmentShader: document.getElementById('fragmentshader').textContent,
-					blending: THREE.AdditiveBlending,
-					depthTest: false,
-					transparent: true
-				});
+	<footer class="footer">
+		<div class="footer__inner">
+			<div class="footer__brand">
+				<span class="brand__text">researchim<span class="brand__accent">.ai</span></span>
+				<p>Исследования и открытые инструменты в области ИИ, RL и LLM.</p>
+			</div>
+			<nav class="footer__links" aria-label="Ссылки в подвале">
+				<a href="#about">О нас</a>
+				<a href="#focus">Направления</a>
+				<a href="#projects">Проекты</a>
+				<a href="https://t.me/researchim" target="_blank" rel="noopener noreferrer">Telegram</a>
+				<a href="https://github.com/researchim-ai" target="_blank" rel="noopener noreferrer">GitHub</a>
+			</nav>
+			<p class="footer__copy">© <span id="year">2026</span> researchim.ai</p>
+		</div>
+	</footer>
 
-				aiMesh = new THREE.Line(aiGeometry, aiMaterial);
-
-				const box = new THREE.Box3().setFromObject(line);
-				const textWidth = box.max.x - box.min.x;
-				aiMesh.position.x = textWidth / 2 + 5; // Чуть ближе
-
-				// Группа для масштабирования и вращения
-				textGroup = new THREE.Group();
-				textGroup.add(line);
-				textGroup.add(aiMesh);
-				scene.add(textGroup);
-
-				renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
-				renderer.setPixelRatio( window.devicePixelRatio );
-				renderer.setSize( window.innerWidth, window.innerHeight );
-				renderer.setAnimationLoop( animate );
-
-				const container = document.getElementById( 'container' );
-				container.appendChild( renderer.domElement );
-
-				document.addEventListener('mousemove', onDocumentMouseMove, false);
-				window.addEventListener( 'resize', onWindowResize );
-				onWindowResize();
-			}
-
-			function onWindowResize() {
-				const currentWidth = window.innerWidth;
-				const scale = Math.min(1.0, currentWidth / baseWidth) * 0.9; // Уменьшим макс масштаб
-
-				if (textGroup) {
-					textGroup.scale.set(scale, scale, scale);
-				}
-
-				camera.aspect = window.innerWidth / window.innerHeight;
-				camera.updateProjectionMatrix();
-				renderer.setSize( window.innerWidth, window.innerHeight );
-			}
-
-			function onDocumentMouseMove(event) {
-				// Нормализуем координаты мыши (-1 to +1)
-				mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-				mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-				// Расчет целевого вращения в зависимости от позиции мыши (уменьшим влияние)
-				targetRotation.x = mouse.y * 0.15;
-				targetRotation.y = mouse.x * 0.15;
-			}
-
-			function animate() {
-				render();
-			}
-
-			function render() {
-				const time = Date.now() * 0.0005; // Замедлим время
-
-				if (textGroup) {
-					// Плавное вращение текста к целевому значению (слежение за мышью)
-					textGroup.rotation.x += (targetRotation.x - textGroup.rotation.x) * 0.05;
-					textGroup.rotation.y += (targetRotation.y - textGroup.rotation.y) * 0.05;
-				}
-
-				// Более стабильная анимация амплитуды
-				uniforms.amplitude.value = 1.2 + Math.sin(time * 0.5) * 0.3 + Math.cos(time * 0.8) * 0.3;
-				uniforms.color.value.offsetHSL( 0.0002, 0, 0 ); // Замедлим смену цвета
-
-				const attributes = line.geometry.attributes;
-				if (attributes.displacement) {
-					const array = attributes.displacement.array;
-					const noiseFactor = 0.1; // Еще немного уменьшим силу "шума"
-					const damping = 0.98; // Коэффициент затухания
-
-					for ( let i = 0, l = array.length; i < l; i += 3 ) {
-						// Обновляем целевое смещение реже
-						if (Math.random() < 0.01) {
-							displacementTarget[i] = noiseFactor * ( Math.random() - 0.5 ) * 2;
-							displacementTarget[i+1] = noiseFactor * ( Math.random() - 0.5 ) * 2;
-						}
-
-						// Плавно приближаем текущее смещение к целевому
-						array[ i ] += (displacementTarget[i] - array[i]) * 0.1;
-						array[ i + 1 ] += (displacementTarget[i+1] - array[i+1]) * 0.1;
-
-						// Добавляем затухание
-						array[i] *= damping;
-						array[i+1] *= damping;
-					}
-					attributes.displacement.needsUpdate = true;
-				}
-
-				renderer.render( scene, camera );
-			}
-
-			// Инициализация навигации по скроллу
-			function initScrollNav() {
-				const sections = document.querySelectorAll('.fullscreen-section');
-				const navLinks = document.querySelectorAll('#sideNav a');
-				const mainContainer = document.getElementById('mainScrollContainer');
-
-				const observerOptions = {
-					root: mainContainer, // Отслеживаем видимость внутри контейнера прокрутки
-					rootMargin: '0px',
-					threshold: 0.6
-				};
-
-				const observer = new IntersectionObserver((entries, observer) => {
-					entries.forEach(entry => {
-						if (entry.isIntersecting) {
-							const activeLink = document.querySelector(`#sideNav a[href="#${entry.target.id}"]`);
-							if (activeLink) {
-								navLinks.forEach(link => link.classList.remove('active'));
-								activeLink.classList.add('active');
-							}
-						}
-					});
-				}, observerOptions);
-
-				sections.forEach(section => {
-					observer.observe(section);
-				});
-			}
-
-		</script>
-
+	<script src="src/app.js"></script>
 </body>
-
 </html>
