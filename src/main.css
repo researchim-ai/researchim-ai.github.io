@@ -639,6 +639,7 @@ main { position: relative; z-index: 2; }
 	border: 1px solid var(--border);
 	padding: 4px 10px; border-radius: 999px;
 }
+.project__links { display: flex; flex-wrap: wrap; gap: 8px 18px; }
 .project__link { font-weight: 600; font-size: 15px; color: var(--accent); transition: color 0.2s; }
 .project__link:hover { color: var(--accent-bright); }
 
