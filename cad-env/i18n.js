@@ -29,12 +29,10 @@
     batch: ['Batch ≤4 · 8 episode workers', 'Пакет ≤4 · 8 параллельных сред'],
     complete: ['This earlier run is complete. Retention was checked in a separate batch evaluation.', 'Этот ранний прогон завершён. Сохранение навыков проверено отдельно в пакетном режиме.'],
     pending: ['Remaining skill-retention checks are in progress.', 'Проверки сохранения навыков ещё выполняются.'],
-    snapshot: ['RECORDED SNAPSHOT / ', 'СНИМОК РЕЗУЛЬТАТОВ / '],
-    telemetry: [' · Saved results, not live progress', ' · Сохранённые результаты, не текущий прогресс'],
     meshError: ['Mesh unavailable', 'Сетка недоступна'],
     dataError: ['Project snapshot unavailable', 'Снимок проекта недоступен'],
     webglError: ['WebGL is unavailable. Reference geometry is listed below.', 'WebGL недоступен. Описание эталонной геометрии приведено ниже.'],
-    serverError: ['Run a local HTTP server to load the project snapshot.\nSee web/README.md.', 'Для загрузки снимка проекта запустите локальный HTTP-сервер.\nИнструкции: web/README.md.']
+    serverError: ['Open this page over HTTP so the project snapshot can load.', 'Откройте страницу по HTTP, чтобы загрузился снимок проекта.']
   };
   const attributes = {
     'Original technical documentation in English': 'Оригинальная техническая документация на английском',
@@ -94,5 +92,5 @@
   }};
   document.querySelectorAll('[data-language]').forEach(button => button.addEventListener('click', () => window.CAD_I18N.set(button.dataset.language)));
   apply();
-  fetch('translations.json').then(response => { if (!response.ok) throw new Error('Translation catalog unavailable'); return response.json(); }).then(catalog => { strings = catalog; apply(); }).catch(error => console.error(error));
+  fetch('translations.json', { cache: 'no-store' }).then(response => { if (!response.ok) throw new Error('Translation catalog unavailable'); return response.json(); }).then(catalog => { strings = catalog; apply(); }).catch(error => console.error(error));
 })();
